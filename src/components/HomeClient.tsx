@@ -38,11 +38,43 @@ export default function HomeClient({ latestNews }: { latestNews: NewsItem[] }) {
                 display: 'flex',
                 flexDirection: 'column',
                 fontSize: '14px'
-            }} onClick={() => setPanicMode(false)}>
+            }}>
 
                 {/* IDE Title Bar */}
-                <div style={{ padding: '5px 10px', background: '#333', fontSize: '12px', display: 'flex', justifyContent: 'center' }}>
-                    main.c - Visual Studio Panic - EAP Edition
+                <div style={{
+                    height: '35px',
+                    background: '#333',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '0 10px',
+                    userSelect: 'none'
+                }}>
+                    {/* Menus */}
+                    <div style={{ display: 'flex', gap: '15px', fontSize: '13px' }}>
+                        <span>File</span>
+                        <span>Edit</span>
+                        <span>Selection</span>
+                        <span>View</span>
+                        <span style={{ color: '#aaa' }}>Go</span>
+                        <span style={{ color: '#aaa' }}>Run</span>
+                    </div>
+
+                    {/* Title */}
+                    <div style={{ fontSize: '12px', color: '#999', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+                        main.c - Visual Studio Panic - EAP Edition
+                    </div>
+
+                    {/* Window Controls */}
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#F4BF4F', cursor: 'not-allowed' }}></div>
+                        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#61C554', cursor: 'not-allowed' }}></div>
+                        <div
+                            onClick={() => setPanicMode(false)}
+                            title="Close IDE (Return to Life)"
+                            style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#FC625D', cursor: 'pointer', border: '1px solid #d00' }}
+                        ></div>
+                    </div>
                 </div>
 
                 {/* IDE Body */}
