@@ -27,7 +27,7 @@ export default function RootLayout({
         <EasterEggs />
         <div className="min-h-screen flex flex-col">
           <Navbar />
-          <main className="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full pb-24">
+          <main className="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full" style={{ paddingBottom: '120px' }}>
             {children}
           </main>
           <RadioPlayer />

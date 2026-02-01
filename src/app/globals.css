@@ -27,6 +27,36 @@ body {
   cursor: text;
 }
 
+/* SEXY SCROLLBAR */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(51, 51, 51, 0.5);
+  /* Almost invisible grey */
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-orange);
+  /* Glowing orange on interaction */
+  cursor: grab;
+}
+
+/* Firefox support */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+}
+
+
 /* Base Terminal Styles */
 h1,
 h2,
