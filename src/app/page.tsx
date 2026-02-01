@@ -168,19 +168,15 @@ export default function Home() {
       {/* Grid Layout */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
 
-        {/* News Feed */}
+        {/* News Feed Link */}
         <div className="grunge-container">
           <h2 className="title-grunge">Latest Commit (News)</h2>
-          <article style={{ marginBottom: '1.5rem' }}>
-            <h3 style={{ color: 'var(--color-blue)' }}>Παράταση στην ΠΛΗ24</h3>
-            <p style={{ fontSize: '0.9rem', color: '#888' }}>Last modified: 2 hours ago</p>
-            <p>Φήμες λένε ότι ο καθηγητής λυπήθηκε τα δάκρυά μας και έδωσε 2 μέρες ακόμα. Επιβεβαίωση αναμένεται.</p>
-          </article>
-          <article>
-            <h3 style={{ color: 'var(--color-blue)' }}>Νέο επεισόδιο: "Stack Overflow"</h3>
-            <p style={{ fontSize: '0.9rem', color: '#888' }}>Last modified: Yesterday</p>
-            <p>Γιατί ο κώδικας δουλεύει στο δικό μου PC και όχι στον server; Συζήτηση με guest έναν sysadmin.</p>
-          </article>
+          <p style={{ marginBottom: '1rem' }}>
+            System logs are being written to the news directory.
+          </p>
+          <a href="/news" style={{ fontFamily: 'var(--font-fira-code)', fontSize: '0.9rem' }}>
+            &gt; cd /var/log/news
+          </a>
         </div>
 
         {/* Deadlines & Events */}
@@ -189,13 +185,12 @@ export default function Home() {
 
           <div className="code-block" style={{ marginBottom: '1rem' }}>
             <span>$ next_deadline --check</span><br />
-            <span style={{ color: 'var(--color-orange)' }}>&gt; ΠΛΗ11: 3 days, 4 hours left</span>
+            <span style={{ color: 'var(--color-orange)' }}>&gt; No upcoming deadlines detected. (Suspicious...)</span>
           </div>
 
           <div className="code-block">
             <span>$ radio_schedule --now</span><br />
-            <span style={{ color: 'var(--color-blue)' }}>&gt; Now Playing: Lo-fi Beats for Debugging</span><br />
-            <span>&gt; Next: The Survival Hour (21:00)</span>
+            <span style={{ color: 'var(--color-blue)' }}>&gt; Now Playing: 24/7 Lo-fi Beats</span>
           </div>
         </div>
 
