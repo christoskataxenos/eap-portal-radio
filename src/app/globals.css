@@ -96,6 +96,11 @@ a:hover {
   }
 }
 
+/* Utility Classes */
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
 .btn-panic {
   background-color: transparent;
   color: var(--color-orange);

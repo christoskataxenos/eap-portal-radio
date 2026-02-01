@@ -172,10 +172,6 @@ export default function TerminalBoot({ onComplete }: { onComplete: () => void })
                 )}
             </div>
 
-            <style jsx>{`
-        .blink { animation: blink 1s step-end infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-      `}</style>
         </div>
     );
 }

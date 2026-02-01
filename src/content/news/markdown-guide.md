@@ -2,7 +2,7 @@
 title: 'docs(markdown): The Syntax Guide'
 date: '2025-02-02'
 author: 'system'
-tags: ['docs', 'help']
+tags: ['docs', 'help', 'hidden']
 ---
 
 # Επικεφαλίδα 1

@@ -2,7 +2,7 @@
 title: 'patch(grades): Predicted failure for PLH24'
 date: '2023-11-20'
 author: 'admin'
-tags: ['exams', 'panic']
+tags: ['exams', 'panic', 'hidden']
 ---
 
 Το script πρόβλεψης βαθμολογίας έβγαλε `NaN`. 
