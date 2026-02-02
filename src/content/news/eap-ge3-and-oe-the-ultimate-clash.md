@@ -22,7 +22,7 @@ tags: ['EAP', 'Python', 'Clash', 'Deadlines', 'Irony']
 <Terminal title="python3 check_grades.py"> 
 $ python3 check_grades.py
 Traceback (most recent call last): 
-  File "portal.py", line 1, in <module> 
+  File "portal.py", line 1, in &lt;module&gt; 
     from tutors import grades 
 ImportError: cannot import name 'grades' from 'tutors' (ErrorCode: 404_PROFESSOR_NOT_FOUND)
 # Attempting recovery...
