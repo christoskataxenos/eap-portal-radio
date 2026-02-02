@@ -2,8 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
-const contentDirectory = path.join(process.cwd(), 'src/content/news');
-
 export interface NewsPost {
     id: string;
     title: string;
@@ -14,12 +12,31 @@ export interface NewsPost {
 }
 
 export function getAllNews(): NewsPost[] {
+    // Try to resolve the content directory in multiple locations to handle different build contexts (e.g. Vercel root vs project root)
+    const possiblePaths = [
+        path.join(process.cwd(), 'src/content/news'),
+        path.join(process.cwd(), 'portal/src/content/news')
+    ];
+
+    let contentDirectory = '';
+
+    for (const p of possiblePaths) {
+        if (fs.existsSync(p)) {
+            contentDirectory = p;
+            break;
+        }
+    }
+
     // Check if directory exists
-    if (!fs.existsSync(contentDirectory)) {
+    if (!contentDirectory) {
+        console.warn(`[getAllNews] Warning: Content directory not found. Searched in: ${possiblePaths.join(', ')}`);
         return [];
     }
 
+    console.log(`[getAllNews] Using content directory: ${contentDirectory}`);
+
     const fileNames = fs.readdirSync(contentDirectory);
+    console.log(`[News] Found ${fileNames.length} files in ${contentDirectory}:`, fileNames);
 
     const allNewsData = fileNames.map((fileName) => {
         // Remove ".md" from file name to get id
@@ -46,8 +63,12 @@ export function getAllNews(): NewsPost[] {
     // Filter out hidden posts (docs, guides)
     const publishedNews = allNewsData.filter(post => {
         const tags = post.tags || [];
-        return !tags.includes('docs') && !tags.includes('guide') && !tags.includes('hidden');
+        const isHidden = tags.includes('docs') || tags.includes('guide') || tags.includes('hidden');
+        if (isHidden) console.log(`[News] Hiding post: ${post.title} (Tags: ${tags})`);
+        return !isHidden;
     });
+
+    console.log(`[News] Returning ${publishedNews.length} published posts.`);
 
     // Sort posts by date
     return publishedNews.sort((a, b) => {
