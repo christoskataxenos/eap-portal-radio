@@ -1,12 +1,13 @@
 import { getAllNews } from '@/lib/news';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Stats from '@/components/mdx/Stats';
-import { Callout, Terminal } from '@/components/mdx/Blocks';
+import { Callout, Terminal, FileTree } from '@/components/mdx/Blocks';
 
 const components = {
     Stats,
     Callout,
     Terminal,
+    FileTree,
 };
 
 export default function NewsPage() {

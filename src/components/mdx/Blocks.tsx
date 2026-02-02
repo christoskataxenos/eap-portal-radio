@@ -54,3 +54,22 @@ export function Terminal({ title = 'Terminal', children }: { title?: string, chi
         </div>
     );
 }
+
+export function FileTree({ children }: { children: React.ReactNode }) {
+    return (
+        <div style={{
+            background: '#1a1a1a',
+            border: '1px solid #444',
+            borderRadius: '6px',
+            padding: '1rem',
+            margin: '1.5rem 0',
+            fontFamily: "'Fira Code', monospace",
+            fontSize: '0.9rem',
+            color: '#e0e0e0',
+            whiteSpace: 'pre',
+            overflowX: 'auto'
+        }}>
+            {children}
+        </div>
+    );
+}
