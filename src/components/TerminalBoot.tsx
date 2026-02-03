@@ -8,10 +8,11 @@ export default function TerminalBoot({ onComplete }: { onComplete: () => void })
     const [userInput, setUserInput] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
     const [bootFinished, setBootFinished] = useState(false);
+    const [timer, setTimer] = useState(5); // # Αντίστροφη μέτρηση 5 δευτερολέπτων
     const scrollRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Boot Sequence Logs
+    // # Boot Sequence Logs
     const bootLogs = [
         { text: "Initializing kernel... [ OK ]", delay: 200 },
         { text: "Mounting /dev/brain... [ WARNING: Low Capacity ]", delay: 400 },
@@ -25,34 +26,31 @@ export default function TerminalBoot({ onComplete }: { onComplete: () => void })
         { text: "System requires update.", delay: 2600 },
     ];
 
-    // Auto-scroll to bottom
+    // # Auto-scroll to bottom
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
     }, [lines, userInput, isUpdating]);
 
-    // Focus input automatically
+    // # Focus input automatically
     useEffect(() => {
         if (showPrompt && inputRef.current) {
             inputRef.current.focus();
         }
     }, [showPrompt]);
 
-    // Run initial boot sequence
+    // # Run initial boot sequence
     useEffect(() => {
-        // Check if already visited
         const visited = localStorage.getItem('eap_boot_visited');
         if (visited) {
             onComplete();
             return;
         }
 
-        let currentIndex = 0;
-
         const runBoot = async () => {
             for (const log of bootLogs) {
-                await new Promise(r => setTimeout(r, Math.random() * 300 + 100)); // Randomize delay a bit
+                await new Promise(r => setTimeout(r, Math.random() * 300 + 100));
                 setLines(prev => [...prev, log.text]);
             }
             setShowPrompt(true);
@@ -61,46 +59,75 @@ export default function TerminalBoot({ onComplete }: { onComplete: () => void })
         runBoot();
     }, []);
 
-    const handleCommand = async (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            const cmd = userInput.trim().toLowerCase();
-            setShowPrompt(false);
-            setLines(prev => [...prev, `user@eap:~$ ${userInput}`]);
+    // # Auto-continue Logic
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (showPrompt && !isUpdating && !bootFinished) {
+            interval = setInterval(() => {
+                setTimer(prev => {
+                    if (prev <= 1) {
+                        clearInterval(interval);
+                        autoProceed();
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [showPrompt, isUpdating, bootFinished]);
 
-            if (cmd === 'yes' || cmd === 'y' || cmd === '') {
-                // Run Fake Update
-                setIsUpdating(true);
-                setLines(prev => [...prev, "sudo apt-get update && sudo apt-get upgrade -y"]);
+    const autoProceed = () => {
+        setUserInput('y');
+        // # Emit a fake Enter key event if possible, or just call the logic
+        const fakeEvent = { key: 'Enter', preventDefault: () => { } } as any;
+        handleCommandInternal('y');
+    };
 
-                const updateLogs = [
-                    "Hit:1 http://security.eap.gr/repo stable InRelease",
-                    "Hit:2 http://despair.archive.ubuntu.com/ubuntu focal InRelease",
-                    "Get:3 http://grades.eap.gr/predictions future [404 Not Found]",
-                    "Reading package lists... Done",
-                    "Building dependency tree... Done",
-                    "Calculated upgrade: 42 packages.",
-                    "Unpacking mental-stability (0.1-beta)...",
-                    "Setting up radio-portal (2.0.0)...",
-                    "Processing triggers for anxiety-d (1.2)...",
-                    "Done."
-                ];
+    const handleCommandInternal = async (input: string) => {
+        const cmd = input.trim().toLowerCase();
+        setShowPrompt(false);
+        setLines(prev => [...prev, `user@eap:~$ ${input}`]);
 
-                for (const log of updateLogs) {
-                    await new Promise(r => setTimeout(r, Math.random() * 400 + 200));
-                    setLines(prev => [...prev, log]);
-                }
+        if (cmd === 'yes' || cmd === 'y' || cmd === '') {
+            // Run Fake Update
+            setIsUpdating(true);
+            setLines(prev => [...prev, "sudo apt-get update && sudo apt-get upgrade -y"]);
 
-                setTimeout(() => {
-                    finishBoot();
-                }, 1000);
+            const updateLogs = [
+                "Hit:1 http://security.eap.gr/repo stable InRelease",
+                "Hit:2 http://despair.archive.ubuntu.com/ubuntu focal InRelease",
+                "Get:3 http://grades.eap.gr/predictions future [404 Not Found]",
+                "Reading package lists... Done",
+                "Building dependency tree... Done",
+                "Calculated upgrade: 42 packages.",
+                "Unpacking mental-stability (0.1-beta)...",
+                "Setting up radio-portal (2.0.0)...",
+                "Processing triggers for anxiety-d (1.2)...",
+                "Done."
+            ];
 
-            } else {
-                // User typed NO
-                setLines(prev => [...prev, "Aborting update.", "Warning: System may be unstable.", "Booting anyway..."]);
-                setTimeout(() => {
-                    finishBoot();
-                }, 1500);
+            for (const log of updateLogs) {
+                await new Promise(r => setTimeout(r, Math.random() * 400 + 200));
+                setLines(prev => [...prev, log]);
             }
+
+            setTimeout(() => {
+                finishBoot();
+            }, 1000);
+
+        } else {
+            // User typed NO
+            setLines(prev => [...prev, "Aborting update.", "Warning: System may be unstable.", "Booting anyway..."]);
+            setTimeout(() => {
+                finishBoot();
+            }, 1500);
+        }
+    };
+
+    const handleCommand = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleCommandInternal(userInput);
         }
     };
 
@@ -145,7 +172,9 @@ export default function TerminalBoot({ onComplete }: { onComplete: () => void })
 
                 {showPrompt && (
                     <div style={{ display: 'flex' }}>
-                        <span style={{ color: '#aaa', marginRight: '10px' }}>Do you want to continue? [Y/n]</span>
+                        <span style={{ color: '#aaa', marginRight: '10px' }}>
+                            Do you want to continue? [Y/n] (Auto-yes in {timer}s)
+                        </span>
                         <input
                             ref={inputRef}
                             type="text"

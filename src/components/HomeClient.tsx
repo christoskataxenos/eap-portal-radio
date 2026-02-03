@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import TerminalBoot from '@/components/TerminalBoot';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { getUpcomingShow } from '@/lib/schedule';
 
 interface NewsItem {
     id: string;
@@ -14,6 +15,43 @@ interface NewsItem {
 export default function HomeClient({ latestNews }: { latestNews: NewsItem[] }) {
     const [panicMode, setPanicMode] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
+    const [currentGenreName, setCurrentGenreName] = useState('Loading...');
+    const [upcomingShow, setUpcomingShow] = useState<{ title: string, time: string } | null>(null);
+
+    // # Παρακολούθηση του είδους μουσικής από το localStorage
+    useEffect(() => {
+        const updateGenre = () => {
+            const savedId = localStorage.getItem('radio-genre') || 'lofi';
+            const genreNames: { [key: string]: string } = {
+                'lofi': '24/7 Lo-fi Beats',
+                'synth': 'Retro Synthwave',
+                'metal': 'Hardcore Debugging',
+                'focus': 'Ambient Focus',
+                'classical': 'Classical Masterpieces'
+            };
+            setCurrentGenreName(genreNames[savedId] || 'Unknown Genre');
+        };
+
+        updateGenre(); // # Αρχική φόρτωση
+        window.addEventListener('storage', updateGenre); // # Ενημέρωση αν αλλάξει σε άλλο tab
+
+        // # Custom event για ενημέρωση στο ίδιο tab
+        const interval = setInterval(updateGenre, 1000);
+
+        return () => {
+            window.removeEventListener('storage', updateGenre);
+            clearInterval(interval);
+        };
+    }, []);
+
+    // # Ενημέρωση επόμενης εκπομπής
+    useEffect(() => {
+        setUpcomingShow(getUpcomingShow());
+        const interval = setInterval(() => {
+            setUpcomingShow(getUpcomingShow());
+        }, 1000 * 60); // # Κάθε λεπτό
+        return () => clearInterval(interval);
+    }, []);
 
     if (showIntro) {
         return (
@@ -244,12 +282,16 @@ export default function HomeClient({ latestNews }: { latestNews: NewsItem[] }) {
 
                     <div className="code-block" style={{ marginBottom: '1rem' }}>
                         <span>$ next_deadline --check</span><br />
-                        <span style={{ color: 'var(--color-orange)' }}>&gt; No upcoming deadlines detected. (Suspicious...)</span>
+                        <span style={{ color: 'var(--color-orange)' }}>&gt; ΠΛΗ10: 25 Feb 2026 (Priority: High)</span><br />
+                        <span style={{ color: 'var(--color-orange)' }}>&gt; ΠΛΗΠΡΟ: 11 March 2026 --force --maytheforcebewithus</span>
                     </div>
 
                     <div className="code-block">
                         <span>$ radio_schedule --now</span><br />
-                        <span style={{ color: 'var(--color-blue)' }}>&gt; Now Playing: 24/7 Lo-fi Beats</span>
+                        <span style={{ color: 'var(--color-blue)' }}>&gt; Now Playing: {currentGenreName}</span><br />
+                        <span style={{ color: '#666', fontSize: '0.8rem' }}>
+                            &gt; upcoming-scheduled-show: {upcomingShow ? `"${upcomingShow.title}" @ ${upcomingShow.time}` : 'None'}
+                        </span>
                     </div>
                 </div>
 
