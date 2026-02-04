@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 import Navbar from '@/components/Navbar';
 import RadioPlayer from '@/components/RadioPlayer';
+import Terminal from '@/components/Terminal';
 import EasterEggs from '@/components/EasterEggs';
 
 // ... (Metadata stays same)
@@ -27,9 +28,10 @@ export default function RootLayout({
         <EasterEggs />
         <div className="min-h-screen flex flex-col">
           <Navbar />
-          <main className="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full" style={{ paddingBottom: '120px' }}>
+          <main className="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full" style={{ paddingBottom: 'var(--terminal-height, 160px)', transition: 'padding 0.3s ease-in-out' }}>
             {children}
           </main>
+          <Terminal />
           <RadioPlayer />
         </div>
       </body>
